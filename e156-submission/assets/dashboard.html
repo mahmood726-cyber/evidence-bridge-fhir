@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EvidenceBridgeFHIR Dashboard Handoff</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Gill Sans", "Trebuchet MS", "Segoe UI", sans-serif;
+      color: #1c1f24;
+      background: linear-gradient(180deg, #fbf6ef 0%, #efe4d7 100%);
+    }
+
+    main {
+      width: min(820px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 32px 0 56px;
+    }
+
+    .panel {
+      background: rgba(255, 252, 248, 0.94);
+      border: 1px solid rgba(28, 31, 36, 0.12);
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: 0 24px 60px rgba(28, 31, 36, 0.12);
+    }
+
+    h1, h2 {
+      margin: 0;
+      line-height: 1.04;
+    }
+
+    h1 { font-size: clamp(2rem, 5vw, 3.6rem); }
+    h2 { font-size: 1.2rem; margin-top: 20px; }
+
+    p { line-height: 1.7; color: #59616f; }
+
+    .links {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    a {
+      display: block;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: rgba(29, 78, 216, 0.08);
+      color: #1d4ed8;
+      text-decoration: none;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="panel">
+      <h1>EvidenceBridgeFHIR</h1>
+      <p>
+        This handoff page keeps the E156 bundle compact while still linking directly to the working exchange dashboard
+        and the core FHIR bundle artifacts.
+      </p>
+      <h2>Open</h2>
+      <div class="links">
+        <a href="../../index.html">Root dashboard</a>
+        <a href="../../citation-bundle.json">FHIR bundle</a>
+        <a href="../../data.json">Derived dashboard data</a>
+        <a href="../../scripts/build_evidence_bridge_fhir.py">Builder</a>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

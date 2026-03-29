@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EvidenceBridgeFHIR</title>
+  <meta name="description" content="FHIR Citation and ArtifactAssessment export dashboard for the C-drive research portfolio snapshot.">
+  <style>
+    :root {
+      --bg: #f6efe7;
+      --ink: #1c1f24;
+      --muted: #59616f;
+      --line: rgba(28, 31, 36, 0.12);
+      --panel: rgba(255, 252, 248, 0.93);
+      --accent: #b45309;
+      --accent-2: #1d4ed8;
+      --shadow: 0 24px 60px rgba(28, 31, 36, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: "Gill Sans", "Trebuchet MS", "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 10% 18%, rgba(180, 83, 9, 0.12), transparent 22%),
+        radial-gradient(circle at 82% 18%, rgba(29, 78, 216, 0.12), transparent 22%),
+        linear-gradient(180deg, #fbf6ef 0%, #efe4d7 100%);
+    }
+
+    main {
+      width: min(1160px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 28px 0 64px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      padding: 24px;
+    }
+
+    .hero,
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .hero {
+      grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr);
+      align-items: stretch;
+    }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-size: 0.76rem;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    h1, h2 {
+      margin: 0;
+      line-height: 1.02;
+      letter-spacing: -0.03em;
+    }
+
+    h1 { font-size: clamp(2.3rem, 5vw, 4.6rem); }
+    h2 { font-size: 1.45rem; }
+
+    p {
+      line-height: 1.7;
+      color: var(--muted);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.72);
+    }
+
+    .label {
+      display: block;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.75rem;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .value {
+      font-size: 2rem;
+      line-height: 1;
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    .stack {
+      display: grid;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .row:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .row strong {
+      display: block;
+      color: var(--ink);
+    }
+
+    .row span {
+      display: block;
+      color: var(--muted);
+    }
+
+    .pill {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(29, 78, 216, 0.1);
+      color: var(--accent-2);
+      font-size: 0.9rem;
+      font-weight: 700;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      text-align: right;
+    }
+
+    a {
+      color: var(--accent-2);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .section { margin-top: 18px; }
+
+    @media (max-width: 860px) {
+      .hero,
+      .grid,
+      .stats {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="panel hero">
+      <div>
+        <p class="eyebrow">Standards Export</p>
+        <h1>EvidenceBridgeFHIR</h1>
+        <p>
+          A new interoperability layer that converts each indexed portfolio project into a FHIR Citation record
+          and adds ArtifactAssessment records only where the source snapshot already carries an explicit lifecycle label.
+        </p>
+      </div>
+      <aside class="panel" style="padding:18px">
+        <p class="eyebrow" style="margin-bottom:10px">Bundle Summary</p>
+        <div class="stats" id="metric-grid"></div>
+      </aside>
+    </section>
+
+    <section class="grid section">
+      <section class="panel">
+        <p class="eyebrow">Assessment Coverage</p>
+        <h2>Statuses preserved as ArtifactAssessments</h2>
+        <div class="stack" id="status-breakdown"></div>
+      </section>
+      <section class="panel">
+        <p class="eyebrow">Citation-only Pressure</p>
+        <h2>Tiers still exporting without a status assessment</h2>
+        <div class="stack" id="tier-breakdown"></div>
+      </section>
+    </section>
+
+    <section class="grid section">
+      <section class="panel">
+        <p class="eyebrow">Citation-only sample</p>
+        <h2>Projects that still become placeholders</h2>
+        <div class="stack" id="citation-only-sample"></div>
+      </section>
+      <section class="panel">
+        <p class="eyebrow">Assessment sample</p>
+        <h2>Projects already carrying a reusable judgment</h2>
+        <div class="stack" id="assessment-sample"></div>
+      </section>
+    </section>
+
+    <section class="panel section">
+      <p class="eyebrow">Artifacts</p>
+      <h2>Repo outputs</h2>
+      <div class="grid">
+        <article class="card">
+          <span class="label">FHIR bundle</span>
+          <strong>citation-bundle.json</strong>
+          <p>A static FHIR collection bundle containing Citation and ArtifactAssessment resources.</p>
+          <a href="citation-bundle.json">Open bundle</a>
+        </article>
+        <article class="card">
+          <span class="label">Builder</span>
+          <strong>scripts/build_evidence_bridge_fhir.py</strong>
+          <p>The snapshot-first generator for the exchange-layer export.</p>
+          <a href="scripts/build_evidence_bridge_fhir.py">Open builder</a>
+        </article>
+        <article class="card">
+          <span class="label">Reader</span>
+          <strong>e156-submission/index.html</strong>
+          <p>The E156 paper and protocol capsule for the export method.</p>
+          <a href="e156-submission/index.html">Open E156 reader</a>
+        </article>
+        <article class="card">
+          <span class="label">Source snapshot</span>
+          <strong>data-source/portfolio-data.snapshot.json</strong>
+          <p>The bundled ResearchConstellation snapshot used for reproducible local and Pages rebuilds.</p>
+          <a href="data-source/portfolio-data.snapshot.json">Open snapshot</a>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <script src="data.js"></script>
+  <script>
+    const data = window.EVIDENCE_BRIDGE_FHIR_DATA;
+
+    function card(label, value) {
+      return '<div class="card"><span class="label">' + label + '</span><span class="value">' + value + '</span></div>';
+    }
+
+    function row(title, subtitle, value) {
+      return '<div class="row"><div><strong>' + title + '</strong><span>' + subtitle + '</span></div><span class="pill">' + value + '</span></div>';
+    }
+
+    document.getElementById('metric-grid').innerHTML = [
+      card('Citations', data.metrics.citationCount),
+      card('Assessments', data.metrics.assessmentCount),
+      card('Bundle entries', data.metrics.bundleEntryCount),
+      card('Coverage', data.metrics.explicitCoveragePercent + '%')
+    ].join('');
+
+    document.getElementById('status-breakdown').innerHTML = data.explicitStatusBreakdown.map(function(item) {
+      return row(item.status, 'ArtifactAssessment records carrying this status', item.count);
+    }).join('');
+
+    document.getElementById('tier-breakdown').innerHTML = data.citationOnlyByTier.map(function(item) {
+      return row(item.tier, 'Citation-only projects in this tier', item.count);
+    }).join('');
+
+    document.getElementById('citation-only-sample').innerHTML = data.citationOnlySample.map(function(item) {
+      return row(item.name, item.tier + ' | ' + item.type, item.path);
+    }).join('');
+
+    document.getElementById('assessment-sample').innerHTML = data.assessmentSample.map(function(item) {
+      return row(item.name, item.tier + ' | ' + item.status, item.path);
+    }).join('');
+  </script>
+</body>
+</html>
