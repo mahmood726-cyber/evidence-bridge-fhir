@@ -1,4 +1,6 @@
-M. Mahmood
+Mahmood Ahmad
+Tahir Heart Institute
+mahmood.ahmad2@nhs.net
 
 EvidenceBridgeFHIR: Exporting the C Drive Evidence Portfolio into Citation and ArtifactAssessment Bundles
 
