@@ -23,13 +23,13 @@ EvidenceBridgeFHIR addresses that gap by exporting:
 
 ## Rebuild
 
-Run:
+Run from the repo root:
 
-`python C:\Users\user\EvidenceBridgeFHIR\scripts\build_evidence_bridge_fhir.py`
+`python scripts/build_evidence_bridge_fhir.py`
 
 For a custom source file:
 
-`python C:\Users\user\EvidenceBridgeFHIR\scripts\build_evidence_bridge_fhir.py --source path\to\portfolio-data.json`
+`python scripts/build_evidence_bridge_fhir.py --source path/to/portfolio-data.json`
 
 ## Standards basis
 
